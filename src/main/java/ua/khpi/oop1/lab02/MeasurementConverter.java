@@ -31,6 +31,6 @@ public class MeasurementConverter {
         double t = (k * r) / 10.0 + b;
         short rPrime = (short) Math.round((t - b) * 10.0 / k);
 
-        System.out.printf("r: %-4d | T: %7.4f C | r': %-4d | Різниця: %d%n", r, t, rPrime, (rPrime - r));
+        System.out.printf("r: %-6d | T: %9.4f C | r': %-6d | Різниця: %d%n", r, t, rPrime, (rPrime - r));
     }
 }
