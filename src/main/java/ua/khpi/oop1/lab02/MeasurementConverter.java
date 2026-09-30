@@ -22,6 +22,7 @@ public class MeasurementConverter {
         runCalibrationTask((short) 0);
         runCalibrationTask((short) 1);
         runCalibrationTask((short) 800);
+        runCalibrationTask((short) 32767);
     }
 
     public static void runCalibrationTask(short r) {
