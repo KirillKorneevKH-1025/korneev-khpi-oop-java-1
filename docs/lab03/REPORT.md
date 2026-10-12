@@ -6,7 +6,7 @@
 
 **Репозиторій:** https://github.com/KirillKorneevKH-1025/korneev-khpi-oop-java-1
 **Гілка:** `lab03`
-**Pull Request:** https://github.com/KirillKorneevKH-1025/korneev-khpi-oop-java-1/pull/3
+**Pull Request:** https://github.com/KirillKorneevKH-1025/korneev-khpi-oop-java-1/pull/4
 
 ## Мета
 Точний переклад прикладної формули у вирази Java з обґрунтованими типами проміжних результатів, явним порядком операцій, розмірнісною перевіркою та відтворюваним набором тестових даних.
