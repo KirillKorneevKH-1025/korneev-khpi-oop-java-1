@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <dos.h>
+
+struct sec_cat {
+    unsigned char name[8];
+    unsigned char name_e[3];
+    unsigned char atr;
+    unsigned char rez[10];
+    unsigned int time;
+    unsigned int date;
+    unsigned int n_clast;
+    unsigned long size;
+};
+
+void main() {
+    union REGS in, out;
+    struct SREGS sr;
+    struct sec_cat sec[16];
+    int i;
+
+    in.h.ah = 0x02;
+    in.h.al = 0x01;
+    in.h.dl = 0x80;
+    in.h.dh = 0x00;
+    in.h.ch = 0x00;
+    in.h.cl = 0x01;
+
+    sr.es = FP_SEG(sec);
+    in.x.bx = FP_OFF(sec);
+
+    int86x(0x13, &in, &out, &sr);
+
+    if (out.x.cflag) {
+        printf("Помилка читання сектора. Код: %x\n", out.h.ah);
+    } else {
+        printf("Сектор успішно прочитано.\n");
+        for(i = 0; i < 16; i++) {
+            if (sec[i].name[0] == 0x00) break;
+            if (sec[i].name[0] == 0xE5) continue;
+            
+            printf("Файл: %.8s.%.3s ", sec[i].name, sec[i].name_e);
+            printf("Атрибути: %02X ", sec[i].atr);
+            printf("Клас.: %u ", sec[i].n_clast);
+            printf("Розмір: %lu байт\n", sec[i].size);
+        }
+    }
+}
