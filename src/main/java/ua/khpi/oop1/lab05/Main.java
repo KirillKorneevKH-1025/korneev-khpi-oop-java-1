@@ -5,79 +5,93 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("=== Обов'язковий рівень (Варіант 2) ===");
         // 1. Типовий набір
-        processSequence(new int[]{2, 4, 1, 5, 3});
+        runSequenceTest("Типовий набір", new int[]{2, 4, 1, 5, 3}, true, 6, 20, 2);
         // 2. Мінімальний набір (порожня послідовність)
-        processSequence(new int[]{});
+        runSequenceTest("Мінімальний набір", new int[]{}, true, 0, 1, 0);
         // 3. Граничний набір (рівно 20 елементів)
-        processSequence(new int[]{1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5});
+        runSequenceTest("Граничний набір (20 ел.)",
+                new int[]{1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5},
+                true, 30, 14400, 16);
         // 4. Помилковий набір (число поза межами 1-5)
-        processSequence(new int[]{2, 6, 1});
+        runSequenceTest("Помилка (значення 6 > 5)", new int[]{2, 6, 1}, false, 0, 0, 0);
+        // 5. Помилковий набір (розмір понад 20 елементів)
+        runSequenceTest("Помилка (розмір 21 > 20)",
+                new int[]{1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1},
+                false, 0, 0, 0);
 
         System.out.println("\n=== Поглиблений рівень (Завдання B) ===");
-        checkLuhn(12345674); // Чинний код (сума 30)
-        checkLuhn(12345670); // Нечинний код
-        checkLuhn(9999999);  // Відхилення за діапазоном (менше 10 000 000)
-        checkLuhn(100000000); // Відхилення за діапазоном (більше 99 999 999)
+        runLuhnTest("Чинний код", 12345674, true, 30, true);
+        runLuhnTest("Нечинний код", 12345670, true, 26, false);
+        runLuhnTest("Менше діапазону", 9999999, false, 0, false);
+        runLuhnTest("Більше діапазону", 100000000, false, 0, false);
     }
 
-    // Метод обов'язкового рівня
-    public static void processSequence(int[] values) {
+    // Метод обчислення обов'язкового рівня (повертає масив [sum, product, pairCount] або null при помилці)
+    public static long[] processSequence(int[] values) {
         int n = values.length;
         if (n < 0 || n > 20) {
-            System.out.println("Помилка: кількість має бути від 0 до 20.");
-            return;
+            return null;
         }
 
         long sum = 0;
         long product = 1;
         int pairCount = 0;
         int previousValue = -1;
-
         boolean hasEvenPosition = false;
 
         for (int i = 0; i < n; i++) {
             int value = values[i];
             if (value < 1 || value > 5) {
-                System.out.println("Помилка: значення " + value + " поза межами 1-5.");
-                return;
+                return null;
             }
 
-            int position = i + 1; // Позиції рахуємо з 1
+            int position = i + 1;
             if (position % 2 != 0) {
-                sum += value; // Непарні позиції
+                sum += value;
             } else {
-                product *= value; // Парні позиції
+                product *= value;
                 hasEvenPosition = true;
             }
 
-            // Перевірка сусідніх пар, де друге більше за перше
             if (i > 0 && value > previousValue) {
                 pairCount++;
             }
             previousValue = value;
         }
 
-        // Якщо парних позицій не було взагалі, добуток має залишитися 1 (нейтральне)
         if (!hasEvenPosition) {
             product = 1;
         }
 
-        System.out.printf("Вхід: кількість = %d%n", n);
-        System.out.printf("Сума (непарні позиції): %d | Добуток (парні позиції): %d%n", sum, product);
-        System.out.printf("Кількість зростаючих пар: %d%n", pairCount);
-        System.out.println("--------------------------------------------------");
+        return new long[]{sum, product, pairCount};
     }
 
-    // Метод поглибленого рівня
-    public static void checkLuhn(int code) {
+    // Автоматична звірка для обов'язкового рівня
+    public static void runSequenceTest(String name, int[] values, boolean expectValid,
+                                       long expSum, long expProd, int expPairs) {
+        long[] res = processSequence(values);
+        boolean passed;
+
+        if (!expectValid) {
+            passed = (res == null);
+            System.out.printf("[%s] Вхід: n=%d -> Відхилено (Очікувано: помилка) | Статус: %s%n",
+                    name, values.length, passed ? "PASS" : "FAIL");
+        } else {
+            passed = (res != null && res[0] == expSum && res[1] == expProd && res[2] == expPairs);
+            System.out.printf("[%s] Очікувано: sum=%d, prod=%d, pairs=%d | Фактично: sum=%d, prod=%d, pairs=%d | Статус: %s%n",
+                    name, expSum, expProd, expPairs, res[0], res[1], res[2], passed ? "PASS" : "FAIL");
+        }
+    }
+
+    // Метод обчислення поглибленого рівня (повертає [sum, isValid(1/0)] або null при помилці)
+    public static int[] checkLuhn(int code) {
         if (code < 10_000_000 || code > 99_999_999) {
-            System.out.println("Помилка: код " + code + " поза межами 10 000 000 - 99 999 999.");
-            return;
+            return null;
         }
 
         int temp = code;
         int sum = 0;
-        boolean isSecond = false; // Рухаємось справа наліво: остання цифра НЕ подвоюється
+        boolean isSecond = false;
 
         while (temp > 0) {
             int digit = temp % 10;
@@ -92,7 +106,24 @@ public class Main {
             temp /= 10;
         }
 
-        boolean isValid = (sum % 10 == 0);
-        System.out.printf("Код: %d | Сума цифр: %d | Чинний: %b%n", code, sum, isValid);
+        int isValid = (sum % 10 == 0) ? 1 : 0;
+        return new int[]{sum, isValid};
+    }
+
+    // Автоматична звірка для поглибленого рівня
+    public static void runLuhnTest(String name, int code, boolean expectInRange, int expSum, boolean expValid) {
+        int[] res = checkLuhn(code);
+        boolean passed;
+
+        if (!expectInRange) {
+            passed = (res == null);
+            System.out.printf("[%s] Код: %d -> Відхилено за діапазоном | Статус: %s%n",
+                    name, code, passed ? "PASS" : "FAIL");
+        } else {
+            boolean actualValid = (res[1] == 1);
+            passed = (res[0] == expSum && actualValid == expValid);
+            System.out.printf("[%s] Код: %d -> Очікувано: sum=%d, valid=%b | Фактично: sum=%d, valid=%b | Статус: %s%n",
+                    name, code, expSum, expValid, res[0], actualValid, passed ? "PASS" : "FAIL");
+        }
     }
 }
