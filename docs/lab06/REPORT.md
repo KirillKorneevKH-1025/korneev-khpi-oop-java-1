@@ -6,7 +6,7 @@
 
 **Репозиторій:** https://github.com/KirillKorneevKH-1025/korneev-khpi-oop-java-1
 **Гілка:** `lab06`
-**Pull Request:** [посилання буде додано після створення PR]
+**Pull Request:** https://github.com/KirillKorneevKH-1025/korneev-khpi-oop-java-1/pull/7
 
 ## Мета
 Навчитися ділити консольну програму на методи з чіткими параметрами, результатами й відповідальністю та перевіряти обчислювальні методи окремо від введення і виведення.
