@@ -12,7 +12,7 @@ public class Main {
         runMotionTest("Помилка (NaN)", Double.NaN, 2.5, 8.0, false, 0, 0);
 
         System.out.println("\n=== Поглиблений рівень (Завдання B) ===");
-        runBisectionTest("Типовий діапазон [1, 2]", 1.0, 2.0, true, 1.41421, 1e-6);
+        runBisectionTest("Типовий діапазон [1, 2]", 1.0, 2.0, true, Math.sqrt(2.0), 1e-6);
         runBisectionTest("Некоректний відрізок [2, 1]", 2.0, 1.0, false, 0, 0);
         runBisectionTest("Відрізок без зміни знаку [2, 3]", 2.0, 3.0, false, 0, 0);
     }
@@ -119,7 +119,7 @@ public class Main {
         try {
             double actualRoot = findRootBisection(left, right);
             boolean passed = Math.abs(actualRoot - expRoot) <= tolerance;
-            System.out.printf("  Фактично: %.5f | Очікувано: %.5f | Статус: %s%n",
+            System.out.printf("  Фактично: %.6f | Очікувано: %.6f | Статус: %s%n",
                     actualRoot, expRoot, passed ? "PASS" : "FAIL");
         } catch (IllegalArgumentException e) {
             boolean passed = !expectValid;
